@@ -7,9 +7,13 @@ data_dict = df.to_dict()
 transaction_sum = df["Quantity"].sum()
 commission_sum = df["Commission"].sum()
 
-transfers = df.groupby("TransactionType")["Amount"].sum()
+transfers_sum = df.groupby("TransactionType")["Amount"].sum()
 
-total_transfers = transfers.loc["Transfer"]
+total_transfers = transfers_sum.loc["Transfer"]
+
+transfers = df[df["TransactionType"] == "Transfer"]
+
+transfers.to_csv("transfers.csv", index=False)
 
 
 print(transfers)
