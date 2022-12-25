@@ -1,7 +1,12 @@
 import pandas as pd
 
 # Read the text file and specify the delimiter as " - "
-df = pd.read_csv("Etrade_account_values.txt", delimiter=" - ", names=["Date", "Value"], engine="python", encoding='utf-16')
+df = pd.read_csv("Etrade_account_values.txt",
+                 delimiter=" - ",
+                 names=["Date", "Value"],
+                 engine="python",
+                 encoding='utf-16'
+                 )
 
 # Convert the "Date" column to a datetime data type
 df["Date"] = pd.to_datetime(df["Date"])

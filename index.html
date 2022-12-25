@@ -8,23 +8,50 @@
 
   <title>E-Trade | Eli Gooch</title>
   <script type="text/javascript" src="package/dist/d3.js"></script>
+
+  <style>
+    div.bar {
+      display: inline-block;
+      width: 20px;
+      height: 75px;
+      background-color: teal;
+      margin-right: 2px;
+    }
+  </style>
 </head>
 
 <body>
-  <script type="text/javascript">
-    d3.select("body")
-      .append("p")
-      .text("New paragraph!");
 
-    d3.csv("etrade_bot/transfers.csv", function (data) {
-      console.log(data)
-      console.log(typeof (data["TransactionDate"]))
-    })
-  </script>
+
   <h1>E-Trade Data Visualization</h1>
   <p>I have been using E-Trade to invest in the stock market for a few years now.
     I wanted to be able to see how my portfolio was doing relative to how much money I had invested.
     Using E-Trade API and data from E-Trade, this is what I was able to create.</p>
+
+  <script type="text/javascript">
+
+    d3.csv("etrade_bot/transfers.csv", function (data) {
+      console.log(data)
+    })
+
+    var dataset = [];                                                //Initialize empty array
+    for (var i = 0; i < 25; i++) {                   //Loop 25 times
+      var newNumber = Math.random() * 30;  //New random number (0-30)
+      dataset.push(newNumber);                         //Add new number to array
+    }
+
+
+    d3.select("body").selectAll("p")
+      .data(dataset)
+      .enter()
+      .append("div")
+      .attr("class", "bar")
+      .style("height", function (d) {
+        var barHeight = d * 5; // Scale up by factor of 5
+        return barHeight + "px";
+      });
+
+  </script>
 </body>
 
 </html>
