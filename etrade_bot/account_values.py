@@ -12,7 +12,8 @@ df = pd.read_csv("Etrade_account_values.txt",
 df["Date"] = pd.to_datetime(df["Date"])
 
 # Remove the "$" and "," characters from the "Value" column and convert it to a numeric data type
-df["Value"] = df["Value"].str.replace("$", "").str.replace(",", "").astype(float)
+df["Value"] = df["Value"].str.replace(
+    "$", "").str.replace(",", "").astype(float)
 
 # Save the DataFrame to a CSV file
 df.to_csv("Etrade_account_values.csv", index=False)
