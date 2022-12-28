@@ -29,27 +29,94 @@
     Using E-Trade API and data from E-Trade, this is what I was able to create.</p>
 
   <script type="text/javascript">
+    var svgWidth = 500;
+    var svgHeight = 300;
+    var barPadding = 1
 
-    d3.csv("etrade_bot/transfers.csv", function (data) {
-      console.log(data)
-    })
+    //Width and height
+    var w = 500;
+    var h = 300;
+    var padding = 40;
 
-    var dataset = [];                                                //Initialize empty array
-    for (var i = 0; i < 25; i++) {                   //Loop 25 times
-      var newNumber = Math.random() * 30;  //New random number (0-30)
-      dataset.push(newNumber);                         //Add new number to array
+    var dataset, xScale, yScale;  //Empty, for now
+
+    // d3.csv("etrade_bot/Etrade_account_values.csv", function (data) {
+    //   console.log(data);
+    // })
+
+    var parseTime = d3.timeParse("%Y-%m-%d");
+
+    var formatTime = d3.timeFormat("%b %e, %Y");
+
+    var rowConverter = function (d) {
+      return {
+        Date: parseTime(d.Date),
+        Value: parseFloat(d.Value).toFixed(2)
+      }
     }
 
+    //Load in the data
+    d3.csv("etrade_bot/Etrade_account_values.csv", rowConverter).then(function (data) {
 
-    d3.select("body").selectAll("p")
-      .data(dataset)
-      .enter()
-      .append("div")
-      .attr("class", "bar")
-      .style("height", function (d) {
-        var barHeight = d * 5; // Scale up by factor of 5
-        return barHeight + "px";
-      });
+      //Copy data into global dataset
+      dataset = data;
+
+      console.log(data)
+
+      //Create scale functions
+      xScale = d3.scaleTime()
+        .domain([
+          d3.min(dataset, function (d) { return d.Date; }),
+          d3.max(dataset, function (d) { return d.Date; })
+        ])
+        .range([padding, w - padding]);
+
+      yScale = d3.scaleLinear()
+        .domain([
+          d3.min(dataset, function (d) { return d.Value; }),
+          d3.max(dataset, function (d) { return d.Value; })
+        ])
+        .range([h - padding, padding]);
+
+      //Create SVG element
+      var svg = d3.select("body")
+        .append("svg")
+        .attr("width", w)
+        .attr("height", h);
+
+      //Generate date labels first, so they are in back
+      svg.selectAll("text")
+        .data(dataset)
+        .enter()
+        .append("text")
+        .text(function (d) {
+          console.log(d);
+          return formatTime(d.Date);
+        })
+        .attr("x", function (d) {
+          return xScale(d.Date) + 4;
+        })
+        .attr("y", function (d) {
+          return yScale(d.Value) + 4;
+        })
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "11px")
+        .attr("fill", "#bbb");
+
+      //Generate circles last, so they appear in front
+      svg.selectAll("circle")
+        .data(dataset)
+        .enter()
+        .append("circle")
+        .attr("cx", function (d) {
+          return xScale(d.Date);
+        })
+        .attr("cy", function (d) {
+          return yScale(d.Value);
+        })
+        .attr("r", 2);
+
+    });
 
   </script>
 </body>
